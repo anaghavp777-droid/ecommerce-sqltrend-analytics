@@ -71,7 +71,7 @@ ORDER BY sales_month;
 ![Monthly sales summary](screenshots/monthly_sales_summary.png)
 
 ## What I Learned
-Practiced writing multi-table JOINs, GROUP BY/HAVING aggregations, and subqueries to answer real business questions. Also used window functions (RANK) for category-level product ranking, built a VIEW for dashboard-ready monthly reporting, and wrote a stored procedure to retrieve a customer's full order history on demand.
+Practiced writing multi-table JOINs, GROUP BY/HAVING aggregations, and subqueries to answer real business questions. Practiced window functions for ranking products within categories, and used CTEs for time-based trend analysis. Also built a VIEW for dashboard-ready monthly reporting and a stored procedure to retrieve a customer's full order history on demand.
 
 ## Project Structure
 ```
