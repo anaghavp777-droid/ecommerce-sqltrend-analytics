@@ -60,13 +60,12 @@ FROM sales;
 ```sql
 CREATE VIEW monthly_sales_summary AS
 SELECT 
-    DATE_FORMAT(order_date, '%Y-%m') AS sales_month,
+    month(order_date) AS sales_month,
     COUNT(*) AS total_orders,
     SUM(revenue) AS total_revenue,
     AVG(revenue) AS avg_order_value
 FROM sales
-WHERE status = 'Delivered'
-GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+GROUP BY sales_month
 ORDER BY sales_month;
 ```
 ![Monthly sales summary](screenshots/monthly_sales_summary.png)
