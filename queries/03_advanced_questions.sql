@@ -71,21 +71,41 @@ SELECT order_id, customer_id, 'Pending' AS reason FROM sales WHERE status = 'Pen
 SELECT s.order_id, c.customer_name, c.city, s.revenue
 FROM sales AS s JOIN customers AS c ON s.customer_id = c.customer_id;
 
--- 16. Create a view showing total orders and spend per customer.
+-- 13. Create a view showing total orders and spend per customer.
 CREATE VIEW customer_summary AS
 SELECT customer_id, COUNT(*) AS total_orders, SUM(revenue) AS total_spend
 FROM sales GROUP BY customer_id;
 
 SELECT * FROM customer_summary;
 
--- 17. Find duplicate orders (same customer, product, and date).
+-- 14. Find duplicate orders (same customer, product, and date).
 SELECT customer_id, product_name, order_date, COUNT(*) AS duplicate_count
 FROM sales GROUP BY customer_id, product_name, order_date
 HAVING COUNT(*) > 1;
 
--- 18. Show total revenue by payment type.
+-- 15. Show total revenue by payment type.
 SELECT payment_type, SUM(revenue) AS total_revenue
 FROM sales GROUP BY payment_type;
+-- 16. Find the total revenue for a specific category.
+SELECT category, SUM(revenue) AS total_revenue
+FROM sales
+WHERE category = 'Electronics'
+GROUP BY category;
+
+-- 17. List customers along with the number of orders they've placed.
+SELECT c.customer_id, c.customer_name, COUNT(s.order_id) AS order_count
+FROM customers AS c
+JOIN sales AS s ON c.customer_id = s.customer_id
+GROUP BY c.customer_id, c.customer_name;
+
+-- 18. Find the highest revenue order for each customer.
+SELECT customer_id, MAX(revenue) AS highest_order_revenue
+FROM sales
+GROUP BY customer_id;
+
+-- 19. Show all orders that used 'Cash' as the payment type.
+SELECT * FROM sales
+WHERE payment_type = 'Cash';
 
 -- 20. List the most recent 5 orders overall.
 SELECT order_id, customer_id, product_name, order_date
