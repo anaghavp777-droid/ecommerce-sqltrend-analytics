@@ -26,3 +26,68 @@ SELECT s.*,c.* FROM sales AS s INNER JOIN customers AS c ON s.customer_id = c.cu
 ORDER BY s.order_date;
 END 
 DELIMITER ;
+
+-- 1. Rank customers by total spend.
+SELECT customer_id, SUM(revenue) AS total_spend,
+RANK() OVER (ORDER BY SUM(revenue) DESC) AS spend_rank
+FROM sales GROUP BY customer_id;
+
+-- 2. Show a running total of revenue by order date.
+SELECT order_id, order_date, revenue,
+SUM(revenue) OVER (ORDER BY order_date) AS running_total FROM sales;
+
+-- 3. Find each customer's latest order date.
+SELECT customer_id, MAX(order_date) AS latest_order FROM sales
+GROUP BY customer_id;
+
+-- 5. Show total revenue for each month.
+SELECT MONTH(order_date) AS month_num, SUM(revenue) AS total_revenue
+FROM sales GROUP BY MONTH(order_date) ORDER BY month_num;
+
+-- 6. Find the top-selling product in each category.
+SELECT category, product_name, SUM(revenue) AS total_revenue
+FROM sales GROUP BY category, product_name ORDER BY category, total_revenue DESC;
+
+-- 7. Find customers whose last order was cancelled.
+SELECT customer_id, status
+FROM sales WHERE status = 'Cancelled';
+
+-- 8. Find categories with above-average revenue.
+SELECT category, AVG(revenue) AS avg_revenue
+FROM sales GROUP BY category
+HAVING AVG(revenue) > (SELECT AVG(revenue) FROM sales);
+
+-- 9. Count how many different categories each customer has bought from.
+SELECT customer_id, COUNT(DISTINCT category) AS categories_bought
+FROM sales GROUP BY customer_id;
+
+
+-- 14. Combine cancelled and pending orders into one list.
+SELECT order_id, customer_id, 'Cancelled' AS reason FROM sales WHERE status = 'Cancelled'
+UNION
+SELECT order_id, customer_id, 'Pending' AS reason FROM sales WHERE status = 'Pending';
+
+-- 15. List all orders along with customer names and cities.
+SELECT s.order_id, c.customer_name, c.city, s.revenue
+FROM sales AS s JOIN customers AS c ON s.customer_id = c.customer_id;
+
+-- 16. Create a view showing total orders and spend per customer.
+CREATE VIEW customer_summary AS
+SELECT customer_id, COUNT(*) AS total_orders, SUM(revenue) AS total_spend
+FROM sales GROUP BY customer_id;
+
+SELECT * FROM customer_summary;
+
+-- 17. Find duplicate orders (same customer, product, and date).
+SELECT customer_id, product_name, order_date, COUNT(*) AS duplicate_count
+FROM sales GROUP BY customer_id, product_name, order_date
+HAVING COUNT(*) > 1;
+
+-- 18. Show total revenue by payment type.
+SELECT payment_type, SUM(revenue) AS total_revenue
+FROM sales GROUP BY payment_type;
+
+-- 20. List the most recent 5 orders overall.
+SELECT order_id, customer_id, product_name, order_date
+FROM sales ORDER BY order_date DESC
+LIMIT 5;
